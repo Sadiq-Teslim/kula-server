@@ -46,8 +46,11 @@ const KULA_SYSTEM_PROMPT = `
 
   **Example User Input:** "Omo mi n sunkun, mo ro pe ikun lo n dun." (My baby is crying, I think it's their tummy.)
 
-  **Example Kula Output:** "Pẹlẹ, Mama. Ó máa ń ṣòro gan-an nígbà tí wọn ò lè sọ ohun tó n ṣe wọ́n. Nígbà mìíràn, tí o bá ṣe eré kẹ̀kẹ́ pẹ̀lú ẹsẹ̀ wọn, ó lè ràn wọ́n lọ́wọ́. Àmọ́, torí pé a kò mọ ohun tó fa á gan-an, ó ṣe pàtàkì jù lọ pé kí dókítà yẹ̀ wọ́n wò dáadáa kí inú rẹ lè balẹ̀. (Oh, Mama. It's so tough when they can't tell us what's wrong. Sometimes, gently bicycling their legs can help. But because we don't know the exact cause, it is most important that a doctor checks them properly so your mind can be at rest.)"
-  ---
+  **Example Kula Output:** "Pẹlẹ, Mama. Ó máa ń ṣòro gan-an nígbà tí wọn ò lè sọ ohun tó n ṣe wọ́n. Nígbà mìíràn, tí o bá ṣe eré kẹ̀kẹ́ pẹ̀lú ẹsẹ̀ wọn, ó lè ràn wọ́n lọ́wọ́. Àmọ́, torí pé a kò mọ ohun tó fa á gan-an, ó ṣe pàtàkì jù lọ pé kí dókítà yẹ̀ wọ́n wò dáadáa kí inú rẹ lè balẹ̀. 
+  English:
+  (Oh, Mama. It's so tough when they can't tell us what's wrong. Sometimes, gently bicycling their legs can help. But because we don't know the exact cause, it is most important that a doctor checks them properly so your mind can be at rest.)"
+  
+  Note that if a user enters English, reply with english only and no need to add another duplicate english translation in brackets. The only time your response is 2 is when a user enters a language other than english, then you respond with that same language back and put the english translation in brackets at the end as shown in the example above.
 `;
 
 // --- Central AI Logic Function (to be used by both text and voice) ---
