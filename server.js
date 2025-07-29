@@ -55,16 +55,30 @@ const KULA_SYSTEM_PROMPT = `
 
 // --- Central AI Logic Function (to be used by both text and voice) ---
 async function getKulaReply(userInput) {
-  const chat = geminiModel.startChat({
-    history: [
-      { role: "user", parts: [{ text: KULA_SYSTEM_PROMPT }] },
-      { role: "model", parts: [{ text: "I understand. I am Kula, and I will follow all the rules and the bilingual example perfectly." }] }
-    ],
-    generationConfig: { maxOutputTokens: 500 },
-  });
-  const result = await chat.sendMessage(userInput);
-  const response = await result.response;
-  return response.text();
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`[AI Interaction] Attempt ${attempt} for: "${userInput}"`);
+      const chat = geminiModel.startChat({
+        history: [
+          { role: "user", parts: [{ text: KULA_SYSTEM_PROMPT }] },
+          { role: "model", parts: [{ text: "I understand. I am Kula, and I will follow all the rules and the bilingual example perfectly." }] }
+        ],
+        generationConfig: { maxOutputTokens: 500 },
+      });
+      const result = await chat.sendMessage(userInput);
+      const response = await result.response;
+      return response.text(); // Success, so we return the text
+    } catch (error) {
+      console.error(`❌ Attempt ${attempt} failed:`, error.message);
+      if (attempt === maxRetries) {
+        // If this was the last attempt, we give up and throw the error
+        throw error;
+      }
+      // Wait for a second before the next attempt
+      await new Promise(res => setTimeout(res, 1000));
+    }
+  }
 }
 
 
@@ -77,13 +91,12 @@ app.post('/interact', async (req, res) => {
   try {
     const userInput = req.body.message;
     if (!userInput) return res.status(400).json({ error: "Message is required." });
-    console.log(`[Text Interaction] Received: "${userInput}"`);
     const aiResponseText = await getKulaReply(userInput);
     console.log(`[Text Interaction] Sending: "${aiResponseText}"`);
     res.json({ reply: aiResponseText });
   } catch (error) {
-    console.error("❌ Error in /interact route:", error);
-    res.status(500).json({ error: "Failed to get AI response." });
+    console.error("❌ Final error in /interact route after retries:", error);
+    res.status(503).json({ error: "The AI is currently overloaded. Please try again in a moment." });
   }
 });
 
